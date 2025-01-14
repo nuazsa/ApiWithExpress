@@ -109,5 +109,5 @@
 - **Database:** MySQL    
 - **Deployment:** Vercel, Clever Cloud  
 - **Language:** JavaScript  
-- **Libraries:** Express, CORS, JWT, Bcrypt  
+- **Libraries:** Express, CORS, JWT, Bcrypt, Joi 
 - **Server-side:** NodeJS

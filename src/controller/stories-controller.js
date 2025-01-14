@@ -3,13 +3,10 @@ import ResponseError from "../utils/response-error.js";
 
 const create = async (req, res, next) => {
   try {
-    const { description } = req.body;
-
-    if (!description) throw new ResponseError(400, "Missing required fields: description");
     if (!req.user || !req.user.id) throw new ResponseError(401, "Unauthorized: User information is missing");
-
     const userId = req.user.id;
-    await storiesService.create(userId, description);
+
+    await storiesService.create(userId, req.body);
 
     res.status(201).json({
       error: false,
@@ -23,7 +20,6 @@ const create = async (req, res, next) => {
 const getAll = async (req, res, next) => {
   try {
     const stories = await storiesService.getAll();
-
     if (!stories) throw new ResponseError(404, "Stories not found");
 
     res.status(200).json({
@@ -43,12 +39,7 @@ const getAll = async (req, res, next) => {
 
 const getById = async (req, res, next) =>{
   try {
-    const { id } = req.params;
-    
-    if (isNaN(id)) throw new ResponseError(400, "Story ID must be a number");
-      
-    const story = await storiesService.getById(id);
-
+    const story = await storiesService.getById(req.params.id);
     if (!story) throw new ResponseError(404, "Story not found");
 
     res.status(200).json({

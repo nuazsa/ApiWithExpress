@@ -1,18 +1,9 @@
 import userService from '../service/user-service.js';
 import jwt from 'jsonwebtoken';
-import ResponseError from '../utils/response-error.js';
 
 const register = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(email)) throw new ResponseError(400, "Invalid email format");
-    if (!name || !email || !password) throw new ResponseError(400, "Missing required fields: name, email, or password");
-    if (password.length < 8) throw new ResponseError(400, "Password must be at least 8 characters");
-    
-    await userService.register(name, email, password);
+    await userService.register(req.body);
 
     res.status(201).json({
       error: false,
@@ -25,14 +16,7 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
-    if (!emailRegex.test(email)) throw new ResponseError(400, "Invalid email format");
-    if (!email || !password) throw new ResponseError(400, "Missing required fields: email or password");
-
-    const user = await userService.login(email, password);
+    const user = await userService.login(req.body);
     
     const token = jwt.sign({ 
       id: user.user_id, 

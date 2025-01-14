@@ -1,8 +1,12 @@
 import dbPool from "../config/database.js";
 import ResponseError from "../utils/response-error.js";
+import {validate} from "../validation/validation.js";
+import {createStoryValidation, getStoryByIdValidation} from "../validation/stories-validation.js";
 
-const create = async (userId, description) => {
+const create = async (userId, request) => {
   try {
+    const {description} = validate(createStoryValidation, request);
+
     const query = "INSERT INTO stories (user_id, description) VALUES (?, ?)";
     const [result] = await dbPool.execute(query, [userId, description]);
 
@@ -28,7 +32,6 @@ const getAll = async () => {
     `;
 
     const [stories] = await dbPool.execute(query);
-
     return stories;
   } catch (e) {
     throw new ResponseError(500, e.message || "Database error");
@@ -37,6 +40,8 @@ const getAll = async () => {
 
 const getById = async (id) => {
   try {
+    const storyId = validate(getStoryByIdValidation, id)
+
     const query = `
       SELECT 
         stories.story_id, 
@@ -48,8 +53,7 @@ const getById = async (id) => {
       WHERE stories.story_id = ?
     `;
 
-    const [story] = await dbPool.execute(query, [id]);
-
+    const [story] = await dbPool.execute(query, [storyId]);
     return story[0];
   } catch (e) {
     throw new ResponseError(500, e.message || "Database error");
